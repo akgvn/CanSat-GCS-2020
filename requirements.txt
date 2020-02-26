@@ -1,2 +1,3 @@
 PyQt5==5.14.1
 pyqtgraph==0.10.0
+pyserial==3.4
