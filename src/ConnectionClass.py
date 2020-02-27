@@ -20,7 +20,7 @@ class SerialBridge:
     fieldnames = ["TEAM_ID", "MISSION_TIME", "PACKET_COUNT", "ALTITUDE", "PRESSURE", "TEMP", "VOLTAGE",
                   "GPS_TIME", "GPS_LATITUDE", "GPS_LONGITUDE", "GPS_ALTITUDE", "GPS_SATS", "AIR_SPEED", "SOFTWARE_STATE", "PARTICLE_COUNT"]  # columns of dataFrame
 
-    def __init__(self, baudrate, port):
+    def __init__(self, port,baudrate ):
         self.mySerial = serial.Serial(port, baudrate, timeout=None)
         self.mySerial.flushInput()  # empty the buffer
         time.sleep(1)  # expected time to establish port connection
@@ -31,6 +31,8 @@ class SerialBridge:
 
     def getPort(self):
         return self.port
+    def getSerial(self):
+    	return mySerial
 
     def setBaudrate(self, baudrate):
         self.baudrate = baudrate
@@ -46,6 +48,8 @@ class SerialBridge:
         return splittedArduinoData
 
     def getDictionary(self):
+        row = self.getValues()
+        self.addToList(row)
         return self.myDict
 
     def writeToCSV(self, dataList):
@@ -108,4 +112,4 @@ class SerialBridge:
         self.myDict["SOFTWARE_STATE"].append(dataList[13])
         self.myDict["PARTICLE_COUNT"].append(dataList[14])
         print(dataList)
-        self.writeToCSV(dataList)  # write to CSV
+        #self.writeToCSV(dataList)  # write to CSV
