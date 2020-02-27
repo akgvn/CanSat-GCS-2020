@@ -74,7 +74,15 @@ venv.bak/
 .spyderproject
 .spyproject
 
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
 # Add more:
 bin/
 pyvenv.cfg
 .vscode/
+*.csv
+src/mpldeney.py
+src/Graphing.py

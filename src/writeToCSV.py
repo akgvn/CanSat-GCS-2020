@@ -11,7 +11,7 @@ import time
 import csv
 
 # Arduino'nun bağlı olduğu port, baundrate, timeout
-ser = serial.Serial('COM16', 9600, timeout=None)
+ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=None)
 # belirtilen sürede istenilen miktarda byte gönderilmezse boş döner
 time.sleep(1)  # port bağlantısı kurulması için beklenilen süre
 ser.flushInput()  # bufferı bosaltmak
@@ -21,7 +21,12 @@ In Python 3, there's no implicit conversion between unicode (str) objects and by
 If you know the encoding of the output, you can .decode() it to get a string, 
 or you can turn the \n you want to add to bytes with "\n".encode('ascii')
 """
-
+class SerialReader(object):
+    """docstring for SerialReader"""
+    def __init__(self, arg):
+        super(SerialReader, self).__init__()
+        self.arg = arg
+        
 myDict = {'TEAM_ID': [], 'MISSION_TIME': [], 'PACKET_COUNT': [], 'ALTITUDE': [], 'PRESSURE': [], 'TEMP': [], 'VOLTAGE': [], 'GPS_TIME': [],
           'GPS_LATITUDE': [], 'GPS_LONGITUDE': [], 'GPS_ALTITUDE': [], 'GPS_SATS': [], 'AIR_SPEED': [],  'SOFTWARE_STATE': [], 'PARTICLE_COUNT': []}
 
