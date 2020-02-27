@@ -1,35 +1,36 @@
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from PyQt5 import QtWidgets, QtCore
 import pyqtgraph as pg
-import sys
 from ConnectionClass import SerialBridge
+import sys
 
-import matplotlib
-matplotlib.use('Qt5Agg')
+class GCGraph(QtWidgets.QWidget):
 
+    def __init__(self, name):
+        super().__init__()
 
-class MplCanvas(FigureCanvas):
-
-    def __init__(self, parent=None, width=4, height=3, dpi=100, name = ""):
-        fig = Figure(figsize=(width, height), dpi=dpi)
-        self.axes = fig.add_subplot(111)
-
-        assert name != "", "Name can't be blank!" # TODO this is tech debt, fix this soon. - ag, 27-02-2020 15:02
-
-        self.xdata = []
-        self.ydata = []
+        self.graphWidget = pg.PlotWidget()
 
         self.name = name
+        self.x = []
+        self.y = []
 
-        super(MplCanvas, self).__init__(fig)
+        self.graphWidget.setBackground('w')
+        pen = pg.mkPen(color=(255, 0, 0))  # Red
+
+        self.line = self.graphWidget.plot(self.x, self.y, pen=pen)
+
+    def update_plot_data(self, graph_dict):
+        self.x = graph_dict["MISSION_TIME"]
+        self.y = graph_dict[self.name]
+        
+        self.line.setData(self.x, self.y)  # Update the data.
 
 
 class GraphGrid(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.bridge = SerialBridge(9600, "/dev/ttyACM0")
+        self.bridge = SerialBridge("/dev/ttyACM0", 9600)
         self.graph_data = self.bridge.getDictionary()
 
         self.initGrid()
@@ -44,26 +45,21 @@ class GraphGrid(QtWidgets.QWidget):
         self.grid = QtWidgets.QGridLayout()
         self.grid.setSpacing(10)
 
-        width, height, dpi = 5, 4, 100
-        self.alti_graph = MplCanvas(self, width, height, dpi, "ALTITUDE")
-        self.pressure = MplCanvas(self, width, height, dpi, "PRESSURE")
-        self.temp = MplCanvas(self, width, height, dpi, "TEMP")
-        self.voltage = MplCanvas(self, width, height, dpi, "VOLTAGE")
-        self.air_speed = MplCanvas(self, width, height, dpi, "AIR_SPEED")
-        self.particle_count = MplCanvas(
-            self, width, height, dpi, "PARTICLE_COUNT")
+        self.alti_graph = GCGraph("ALTITUDE")
+        self.pressure = GCGraph("PRESSURE")
+        self.temp = GCGraph("TEMP")
+        self.voltage = GCGraph("VOLTAGE")
+        self.air_speed = GCGraph("AIR_SPEED")
+        self.particle_count = GCGraph("PARTICLE_COUNT")
 
         self.update_plots()
 
-        self.show()
-
-        # Setup a timer to trigger the redraw by calling update_plot.
+        # Setup a timer to redraw all graphs.
         self.timer = QtCore.QTimer()
         self.timer.setInterval(1000)  # in milliseconds
         self.timer.timeout.connect(self.update_plots)
         self.timer.start()
 
-        print("Here")
         self.setLayout(self.grid)
 
         self.grid.addWidget(self.alti_graph, 1, 0)
@@ -73,24 +69,15 @@ class GraphGrid(QtWidgets.QWidget):
         self.grid.addWidget(self.air_speed, 3, 0)
         self.grid.addWidget(self.particle_count, 3, 1)
 
-    def update_plot(self, canvas):
-        # Drop off the first y element, append a new one.
-        canvas.xdata = self.graph_data["MISSION_TIME"]
-        canvas.ydata = self.graph_data[canvas.name]
-
-        canvas.axes.cla()  # Clear the canvas.
-        canvas.axes.plot(canvas.xdata, canvas.ydata, 'r')
-        canvas.draw()  # Trigger the canvas to update and redraw.
-
     def update_plots(self):
 
         # TODO Kayhan -> getDictionary function will be updated to read data from serial such that when we call it from here it reads serial and appends to the dict first.
         self.graph_data = self.bridge.getDictionary()
-        print(self.graph_data)
 
-        self.update_plot(self.alti_graph)
-        self.update_plot(self.pressure)
-        self.update_plot(self.temp)
-        self.update_plot(self.voltage)
-        self.update_plot(self.air_speed)
-        self.update_plot(self.particle_count)
+        self.alti_graph.update_plot_data(self.graph_data)
+        self.pressure.update_plot_data(self.graph_data)
+        self.temp.update_plot_data(self.graph_data)
+        self.voltage.update_plot_data(self.graph_data)
+        self.air_speed.update_plot_data(self.graph_data)
+        self.particle_count.update_plot_data(self.graph_data)
+        
