@@ -1,28 +1,32 @@
-from PyQt5 import QtWidgets, QtCore, uic
+from PyQt5 import QtWidgets, QtCore, uic # TODO these are unneeded now?
 from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
 
-class CanSatGraph(QtWidgets.QWidget):
-    def __init__(self, name):
-        super(CanSatGraph, self).__init__()
+# There used to be a class instead of two functions here.
+# The reason I changed it is that there is a rendering problem
+# that only arises when we use a class derived from QWidget.
+# It is best left alone if / when someone more experienced with
+# QT comes along. ag, 29-02-2020 00:11
 
-        self.name = name
-        self.graph = pg.PlotWidget()
-        self.graph.setTitle(name)
+def createGraph(name): #, data):
 
-        self.x = [] # data["MISSION_TIME"]
-        self.y = [] # data[name]
+    graph = pg.PlotWidget()
+    graph.setTitle(name)
 
-        self.graph.setBackground('w')
+    x = [] #data["MISSION_TIME"]
+    y = [] #data[name]
 
-        pen = pg.mkPen(color=(255, 0, 0))
-        self.data_line = self.graph.plot(self.x, self.y, pen=pen)
+    graph.setBackground('w')
 
-        # self.graph.show()
+    pen = pg.mkPen(color=(255, 0, 0))
 
-    def update(self, data):
+    data_line = graph.plot(x, y, pen=pen)
 
-        self.x = data["MISSION_TIME"]
-        self.y = data[self.name]
+    return (graph, data_line)
 
-        self.data_line.setData(self.x, self.y)  # Update the data.
+
+def updateGraph(name, line, data):
+    x = data["MISSION_TIME"]
+    y = data[name]
+
+    line.setData(x, y)  # Update the data.

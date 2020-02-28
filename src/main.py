@@ -13,7 +13,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
 
-        self.bridge = SerialBridge("/dev/ttyUSB0", 9600)
+        self.bridge = SerialBridge("/dev/ttyACM0", 9600)
         self.graph_data = self.bridge.getDictionary()
 
         self.graphWidget = GraphGrid()
