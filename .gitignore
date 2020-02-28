@@ -86,3 +86,4 @@ pyvenv.cfg
 *.csv
 src/mpldeney.py
 src/Graphing.py
+run.sh

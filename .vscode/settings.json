@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "/usr/bin/python3",
+    "python.pythonPath": "~/repositories/CanSat-GCS/bin/python3",
     "python.autoComplete.extraPaths": [
         "~/repositories/CanSat-GCS/lib/python3.6/site-packages/serial"
     ],
