@@ -5,7 +5,7 @@ import pyqtgraph as pg
 # There used to be a class instead of two functions here.
 # The reason I changed it is that there is a rendering problem
 # that only arises when we use a class derived from QWidget.
-# It is best left alone if / when someone more experienced with
+# It is best left alone until if / when someone more experienced with
 # QT comes along. ag, 29-02-2020 00:11
 
 def createGraph(name): #, data):
