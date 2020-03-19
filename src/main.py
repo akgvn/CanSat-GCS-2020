@@ -14,7 +14,7 @@ class MainWindow(QtWidgets.QMainWindow):
         super(MainWindow, self).__init__(*args, **kwargs)
 
         self.bridge = SerialBridge("/dev/ttyACM0", 9600)
-        self.graph_data = self.bridge.getDictionary()
+        self.graph_data, temp = self.bridge.getDictionary()
 
         self.graphWidget = GraphGrid()
         self.graphWidget.show()
@@ -26,9 +26,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.timer.start()
 
     def update_plot_data(self):
-
-        self.graph_data = self.bridge.getDictionary()
-        self.graphWidget.update_plots(self.graph_data)
+        self.graph_data, latest_label = self.bridge.getDictionary()
+        self.graphWidget.update_plots(self.graph_data, latest_label)
 
 def main():
     app = QtWidgets.QApplication(sys.argv)

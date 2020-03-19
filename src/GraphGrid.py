@@ -29,9 +29,19 @@ class GraphGrid(QtWidgets.QDialog):
             self.graphs.append(g)
             self.data_lines.append(d)
 
-        for loc in range(1, 4):
-            for idx in range(len(self.graph_names)):
-                self.grid.addWidget(self.graphs[idx], 1, (idx % 2))
+        c = 0
+        for idx in range(len(self.graph_names)):
+            if (idx % 2 == 0):
+                c += 1
+            self.grid.addWidget(self.graphs[idx], c, (idx % 2))
+
+        self.ttemp = QtWidgets.QWidget()
+        self.label = QtWidgets.QLabel(self.ttemp)
+        self.label.setText("NO DATA")
+        # self.label.setFixedWidth(160)
+        self.label.setStyleSheet("font: 24pt")
+
+        self.grid.addWidget(self.label, 1, 2, 3, 1)
 
         """
         self.grid.addWidget(self.alti_graph, 1, 0)
@@ -44,12 +54,14 @@ class GraphGrid(QtWidgets.QDialog):
 
         self.setLayout(self.grid)
 
-    def update_plots(self, graph_data):
+    def update_plots(self, graph_data, latest_label):
 
         for idx in range(len(self.graph_names)):
             name = self.graph_names[idx]
             data_line = self.data_lines[idx]
             updateGraph(name, data_line, graph_data)
+        
+        self.label.setText(latest_label)
 
         """
         self.alti_graph.update(graph_data)
