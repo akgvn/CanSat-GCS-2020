@@ -19,7 +19,7 @@ class SerialBridge:
         while flag:
             try:
                 self.mySerial = serial.Serial(port, baudrate, timeout=None)
-                self.mySerial.flushInput()  # empty the buffer
+                self.mySerial.reset_input_buffer()  # empty the buffer
                 flag = False
             except Exception as e:
                 print("Bağlantı kurulamadı", i, e)
@@ -31,6 +31,8 @@ class SerialBridge:
             csv_writer = csv.DictWriter(csv_file, fieldnames=self.fieldnames)
             csv_writer.writeheader()
 
+    def clearBuffer(self):
+        self.mySerial.reset_input_buffer()  # empty the buffer
     def setPort(self, port):
         self.port = port
         self.mySerial.port = port
